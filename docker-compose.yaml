@@ -7,21 +7,16 @@ services:
     links:
       - db
     ports:
-      - '8000:8000'
+      - '8080:8080'
     env_file:
       - .env
-    restart: always
     volumes:
-      - .:/app
       - ./log.txt:/app/log.txt
     
   db:
-    build:
-      context: .
-      dockerfile: db.Dockerfile
+    image: postgres:15.2-alpine
     ports:
       - '5432:5432'
-    restart: always
     env_file:
       - .env
     volumes:

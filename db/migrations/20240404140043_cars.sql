@@ -5,7 +5,7 @@ CREATE TABLE owners (
     name CHAR(100) NOT NULL DEFAULT '',
     surname CHAR(100) NOT NULL DEFAULT '',
     patronymic CHAR(100) NOT NULL DEFAULT ''
-)
+);
 
 CREATE TABLE cars (
     id SERIAL PRIMARY KEY,
@@ -14,7 +14,7 @@ CREATE TABLE cars (
     model CHAR(100) NOT NULL DEFAULT '',
     year INTEGER NOT NULL DEFAULT 0,
     owner_id INTEGER NOT NULL REFERENCES owners(id)
-)
+);
 
 INSERT INTO owners (name, surname, patronymic) VALUES ('Иван', 'Иванов', 'Иванович');
 INSERT INTO owners (name, surname, patronymic) VALUES ('Петр', 'Петров', 'Петрович');
