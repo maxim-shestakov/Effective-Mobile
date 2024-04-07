@@ -2,7 +2,7 @@ package structures
 
 //swagger:model
 type Car struct {
-	ID      int    `json:"id" example:"1"`
+	ID      int    `json:"id" example:"3"`
 	Regnum  string `json:"regnum" example:"A111AA155"`
 	Mark    string `json:"mark" example:"BMW"`
 	Model   string `json:"model" example:"X5"`
@@ -12,7 +12,7 @@ type Car struct {
 
 //swagger:model
 type Owner struct {
-	ID         int    `json:"id" example:"1"`
+	ID         int    `json:"id" example:"4"`
 	Name       string `json:"name" example:"Max"`
 	Surname    string `json:"surname" example:"Shestakov"`
 	Patronymic string `json:"patronymic" example:"Olegovich"`
