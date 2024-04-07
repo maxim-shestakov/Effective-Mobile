@@ -1,5 +1,7 @@
 package structures
 
+//go:generate mockgen -source=structures.go -destination=mocks/mocks.go 
+
 //swagger:model
 type Car struct {
 	ID      int    `json:"id" example:"3"`
@@ -37,3 +39,14 @@ type StatusNotFoundMessage struct {
 type StatusInternalServerErrorMessage struct {
 	Message string `json:"message" example:"Error: internal server error"`
 }
+
+type DBService interface{
+	AddCar(Car) error
+	DeleteCar(id string) error
+	UpdateCar(Car) error
+	GetCars() ([]Car, error)
+	AddOwner(Owner) error
+}
+
+
+
