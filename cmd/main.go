@@ -2,7 +2,6 @@ package main
 
 import (
 	l "Effective-Mobile/internal/dbconn"
-	"Effective-Mobile/pkg/logger"
 	"log"
 	"net/http"
 
@@ -27,14 +26,10 @@ import (
 func init() {
 	l.Db = l.Connection()
 	log.Println("PostgreSQL DB connected")
-	logger.LogFile = logger.LoggerInit()
-	log.Println("Started logging to logger.txt")
 }
 
 func main() {
 	defer l.Db.Close()
-	defer logger.LogFile.Close()
-	log.SetOutput(logger.LogFile)
 	r := gin.Default()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
@@ -46,6 +41,8 @@ func main() {
 
 	r.GET("/docs", func(c *gin.Context) { c.Redirect(http.StatusFound, "swagger/index.html") })
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	log.Println("Server started")
 
 	if err := http.ListenAndServe(":8080", r); err != nil {
 		log.Fatal(err)

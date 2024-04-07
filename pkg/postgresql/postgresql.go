@@ -29,7 +29,7 @@ func AddOwner(owner st.Owner) error {
 // Parameter: car of type st.Car.
 // Return type: error.
 func AddCar(car st.Car) error {
-	_, err := l.Db.Exec("INSERT INTO cars (reqnum, mark, model, year, owner_id) VALUES ($1, $2, $3, $4, $5)", car.Regnum, car.Mark, car.Model, car.Year, car.OwnerID)
+	_, err := l.Db.Exec("INSERT INTO cars (regnum, mark, model, year, owner_id) VALUES ($1, $2, $3, $4, $5)", car.Regnum, car.Mark, car.Model, car.Year, car.OwnerID)
 	if err != nil {
 		log.Println(err)
 	}

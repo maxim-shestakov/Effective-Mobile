@@ -27,10 +27,13 @@ func filterCars(regNum, mark, model string, cars []st.Car) []st.Car {
 // GetCars godoc
 // @Summary Get cars
 // @Tags API Functions
-// @Description Get all cars from database or filtered by regnum, mark and model (optional).
+// @Description Get all cars from database or filtered by regnum, mark and model (optional). All filters should be written as query parameters.
 // @ID get-all-cars
 // @Accept json
 // @Produce json
+// @Param regnum query string false "Registration number"
+// @Param mark query string false "Car mark"
+// @Param model query string false "Car model"
 // @Success 200 {object} st.StatusOKMessage "ok"
 // @Failure 500 {object} st.StatusInternalServerErrorMessage "internal server error"
 // @Failure 400 {object} st.StatusBadRequestMessage "bad request"
@@ -40,7 +43,7 @@ func GetCars(c *gin.Context) {
 	cars, err := p.GetCars()
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "can't get cars from db"})
 		return
 	}
 	filterRegnum := c.Query("regnum")
@@ -59,13 +62,15 @@ func GetCars(c *gin.Context) {
 
 	start := (page - 1) * limit
 	end := page * limit
+
+	cars = filterCars(filterRegnum, filterMark, filterModel, cars)
 	if end > len(cars) {
 		end = len(cars)
 	}
-	cars = filterCars(filterRegnum, filterMark, filterModel, cars)
+	
 	PaginatedCars := cars[start:end]
 
-	log.Println("cars gotten") //debug log
+	log.Println("cars received") //debug log
 	c.JSON(http.StatusOK, PaginatedCars)
 }
 
@@ -76,7 +81,7 @@ func GetCars(c *gin.Context) {
 // @ID create-car
 // @Accept json
 // @Produce json
-// @Param input body st.Car true "Car info (only regnum, mark, model, year and owner_id are required)."
+// @Param input body st.Car true "Car info (regnum, mark, model, owner_id are required)."
 // @Success 200 {object} st.StatusOKMessage "ok"
 // @Failure 500 {object} st.StatusInternalServerErrorMessage "internal server error"
 // @Failure 400 {object} st.StatusBadRequestMessage "bad request"
@@ -86,13 +91,13 @@ func CreateCar(c *gin.Context) {
 	var car st.Car
 	if err := c.ShouldBindJSON(&car); err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "can't bind json body to struct"})
 		return
 	}
 	err := p.AddCar(car)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "can't add a car to the db"})
 		return
 	}
 	log.Println("car created") //debug log
@@ -106,7 +111,7 @@ func CreateCar(c *gin.Context) {
 // @ID update-car
 // @Accept json
 // @Produce json
-// @Param input body st.Car true "Car info to update (only regnum, mark, model, year and owner_id are required)."
+// @Param input body st.Car true "Change car info, ID and other one or more fields are required. If the field is empty, it will not be changed ."
 // @Success 200 {object} st.StatusOKMessage "ok"
 // @Failure 500 {object} st.StatusInternalServerErrorMessage "internal server error"
 // @Failure 400 {object} st.StatusBadRequestMessage "bad request"
@@ -116,13 +121,13 @@ func UpdateCar(c *gin.Context) {
 	var car st.Car
 	if err := c.ShouldBindJSON(&car); err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "can't bind json body to struct"})
 		return
 	}
 	err := p.UpdateCar(car)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "can't update a car in the db"})
 		return
 	}
 	log.Println("car updated") //debug log
@@ -132,10 +137,11 @@ func UpdateCar(c *gin.Context) {
 // DeleteCar godoc
 // @Summary Delete car
 // @Tags API Functions
-// @Description Delete car from database by id.
+// @Description Delete a car from the database by ID.
 // @ID delete-car
 // @Accept json
 // @Produce json
+// @Param id path string true "Car ID"
 // @Success 200 {object} st.StatusOKMessage "ok"
 // @Failure 500 {object} st.StatusInternalServerErrorMessage "internal server error"
 // @Failure 400 {object} st.StatusBadRequestMessage "bad request"
@@ -146,7 +152,7 @@ func DeleteCar(c *gin.Context) {
 	err := p.DeleteCar(id)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "can't delete a car from the db"})
 		return
 	}
 	log.Println("car deleted") //debug log
@@ -156,7 +162,7 @@ func DeleteCar(c *gin.Context) {
 // AddOwner godoc
 // @Summary Add owner
 // @Tags API Functions
-// @Description Add a new owner to the database from JSON input.
+// @Description Add a new owner to the database from JSON input body.
 // @ID add-owner
 // @Accept json
 // @Produce json
@@ -170,13 +176,13 @@ func AddOwner(c *gin.Context) {
 	var owner st.Owner
 	if err := c.ShouldBindJSON(&owner); err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "can't bind json body to struct"})
 		return
 	}
 	err := p.AddOwner(owner)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "can't add an owner to the db"})
 		return
 	}
 	log.Println("owner created") //debug log
