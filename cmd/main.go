@@ -1,9 +1,10 @@
 package main
 
 import (
-	l "Effective-Mobile/internal/dbconn"
+	"Effective-Mobile/internal/db"
 	"log"
 	"net/http"
+	"os"
 
 	_ "Effective-Mobile/docs"
 
@@ -23,21 +24,27 @@ import (
 //go install github.com/swaggo/swag/cmd/swag@v1.8.12
 //swag init -g cmd/main.go --parseDependency --parseInternal -d ./,internal/structures,pkg/handlers && go run cmd/main.go - to start
 
-func init() {
-	l.Db = l.Connection()
-	log.Println("PostgreSQL DB connected")
-}
-
 func main() {
-	defer l.Db.Close()
+	user := os.Getenv("POSTGRES_USER")
+	pass := os.Getenv("POSTGRES_PASSWORD")
+	host := os.Getenv("POSTGRES_HOST")
+	port := os.Getenv("POSTGRES_PORT")
+	dataBase := os.Getenv("POSTGRES_DB")
+
+	if len(user) == 0 || len(pass) == 0 || len(host) == 0 || len(port) == 0 || len(dataBase) == 0 {
+		log.Fatal("DB environment variables are not set")
+	}
+	db := db.New(user, pass, host, port, dataBase)
+	log.Println("Connected to DB")
+	defer db.Close()
 	r := gin.Default()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
-	r.GET("/info", h.GetCars)
-	r.PUT("/cars/:id", h.UpdateCar)
-	r.POST("/cars", h.CreateCar)
-	r.POST("/owners", h.AddOwner)
-	r.DELETE("/cars/:id", h.DeleteCar)
+	r.GET("/info", h.GetCars(db))
+	r.PUT("/cars/:id", h.UpdateCar(db))
+	r.POST("/cars", h.CreateCar(db))
+	r.POST("/owners", h.AddOwner(db))
+	r.DELETE("/cars/:id", h.DeleteCar(db))
 
 	r.GET("/docs", func(c *gin.Context) { c.Redirect(http.StatusFound, "swagger/index.html") })
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

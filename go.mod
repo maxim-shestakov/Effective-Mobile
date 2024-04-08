@@ -4,6 +4,8 @@ go 1.22.1
 
 require (
 	github.com/gin-gonic/gin v1.9.1
+	github.com/go-playground/assert/v2 v2.2.0
+	github.com/golang/mock v1.6.0
 	github.com/lib/pq v1.10.9
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.0

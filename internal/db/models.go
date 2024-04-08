@@ -1,6 +1,15 @@
-package structures
+package db
 
-//go:generate mockgen -source=structures.go -destination=mocks/mocks.go 
+//go:generate mockgen -destination=../mocks/mock_storage.go -package=mocks . Storage
+
+type Storage interface{
+	AddCar(Car) error
+	DeleteCar(id string) error
+	UpdateCar(Car) error
+	GetCars() ([]Car, error)
+	AddOwner(Owner) error
+}
+
 
 //swagger:model
 type Car struct {
@@ -39,14 +48,5 @@ type StatusNotFoundMessage struct {
 type StatusInternalServerErrorMessage struct {
 	Message string `json:"message" example:"Error: internal server error"`
 }
-
-type DBService interface{
-	AddCar(Car) error
-	DeleteCar(id string) error
-	UpdateCar(Car) error
-	GetCars() ([]Car, error)
-	AddOwner(Owner) error
-}
-
 
 

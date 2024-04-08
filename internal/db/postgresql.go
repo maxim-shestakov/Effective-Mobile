@@ -1,22 +1,21 @@
-package postgresql
+package db
 
 import (
-	"log"
 	"fmt"
+	"log"
 
-	st "Effective-Mobile/internal/structures"
-
-	l "Effective-Mobile/internal/dbconn"
 
 	_ "github.com/lib/pq"
 )
 
+
+
 // AddOwner inserts a new owner into the database.
 //
-// Parameter: owner of type st.Owner.
+// Parameter: owner of type Owner.
 // Return type: error.
-func AddOwner(owner st.Owner) error {
-	_, err := l.Db.Exec("INSERT INTO owners (name, surname, patronymic) VALUES ($1, $2, $3)", owner.Name, owner.Surname, owner.Patronymic)
+func (p *Postgresql) AddOwner(owner Owner) error {
+	_, err := p.db.Exec("INSERT INTO owners (name, surname, patronymic) VALUES ($1, $2, $3)", owner.Name, owner.Surname, owner.Patronymic)
 	if err != nil {
 		log.Println(err)
 	}
@@ -26,10 +25,10 @@ func AddOwner(owner st.Owner) error {
 
 // AddCar inserts a car into the database.
 //
-// Parameter: car of type st.Car.
+// Parameter: car of type Car.
 // Return type: error.
-func AddCar(car st.Car) error {
-	_, err := l.Db.Exec("INSERT INTO cars (regnum, mark, model, year, owner_id) VALUES ($1, $2, $3, $4, $5)", car.Regnum, car.Mark, car.Model, car.Year, car.OwnerID)
+func (p *Postgresql) AddCar(car Car) error {
+	_, err := p.db.Exec("INSERT INTO cars (regnum, mark, model, year, owner_id) VALUES ($1, $2, $3, $4, $5)", car.Regnum, car.Mark, car.Model, car.Year, car.OwnerID)
 	if err != nil {
 		log.Println(err)
 	}
@@ -39,16 +38,16 @@ func AddCar(car st.Car) error {
 // GetCars retrieves all cars from the database.
 //
 // No parameters.
-// Returns a slice of st.Car structs and an error.
-func GetCars() ([]st.Car, error) {
-	rows, err := l.Db.Query("SELECT * FROM cars")
+// Returns a slice of Car structs and an error.
+func (p *Postgresql) GetCars() ([]Car, error) {
+	rows, err := p.db.Query("SELECT * FROM cars")
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	cars := []st.Car{}
+	cars := []Car{}
 	for rows.Next() {
-		var car st.Car
+		var car Car
 		if err := rows.Scan(&car.ID, &car.Regnum, &car.Mark, &car.Model, &car.Year, &car.OwnerID); err != nil {
 			log.Println(err)
 			return nil, err
@@ -62,10 +61,10 @@ func GetCars() ([]st.Car, error) {
 // UpdateCar updates the information of a car in the database.
 //
 // Parameter:
-//   car st.Car: the car struct containing the information to be updated.
+//   car Car: the car struct containing the information to be updated.
 // Return:
 //   error: an error if the update operation fails.
-func UpdateCar(car st.Car) error {
+func (p *Postgresql) UpdateCar(car Car) error {
 	args := []interface{}{}
 	counter := 1
 	query := "UPDATE cars SET"
@@ -98,7 +97,7 @@ func UpdateCar(car st.Car) error {
 	query = query[:len(query)-1]
 	query += fmt.Sprintf(" WHERE id=$%d", counter)
 	args = append(args, car.ID)
-	_, err := l.Db.Exec(query, args...)
+	_, err := p.db.Exec(query, args...)
 	if err != nil {
 		log.Println("problem with updating information about film", err)
 		return err
@@ -111,8 +110,8 @@ func UpdateCar(car st.Car) error {
 //
 // Parameter: id string
 // Return type: error
-func DeleteCar(id string) error {
-	_, err := l.Db.Exec("DELETE FROM cars WHERE id = $1", id)
+func (p *Postgresql) DeleteCar(id string) error {
+	_, err := p.db.Exec("DELETE FROM cars WHERE id = $1", id)
 	if err != nil {
 		log.Println(err)
 		return err
