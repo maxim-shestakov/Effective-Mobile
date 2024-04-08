@@ -31,12 +31,12 @@ const docTemplate = `{
                 "operationId": "create-car",
                 "parameters": [
                     {
-                        "description": "Car info (only regnum, mark, model, year and owner_id are required).",
+                        "description": "Car info (regnum, mark, model, owner_id are required).",
                         "name": "input",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/Effective-Mobile_internal_structures.Car"
+                            "$ref": "#/definitions/Effective-Mobile_internal_db.Car"
                         }
                     }
                 ],
@@ -44,25 +44,25 @@ const docTemplate = `{
                     "200": {
                         "description": "ok",
                         "schema": {
-                            "$ref": "#/definitions/Effective-Mobile_internal_structures.StatusOKMessage"
+                            "$ref": "#/definitions/Effective-Mobile_internal_db.StatusOKMessage"
                         }
                     },
                     "400": {
                         "description": "bad request",
                         "schema": {
-                            "$ref": "#/definitions/Effective-Mobile_internal_structures.StatusBadRequestMessage"
+                            "$ref": "#/definitions/Effective-Mobile_internal_db.StatusBadRequestMessage"
                         }
                     },
                     "404": {
                         "description": "not found",
                         "schema": {
-                            "$ref": "#/definitions/Effective-Mobile_internal_structures.StatusNotFoundMessage"
+                            "$ref": "#/definitions/Effective-Mobile_internal_db.StatusNotFoundMessage"
                         }
                     },
                     "500": {
                         "description": "internal server error",
                         "schema": {
-                            "$ref": "#/definitions/Effective-Mobile_internal_structures.StatusInternalServerErrorMessage"
+                            "$ref": "#/definitions/Effective-Mobile_internal_db.StatusInternalServerErrorMessage"
                         }
                     }
                 }
@@ -84,12 +84,12 @@ const docTemplate = `{
                 "operationId": "update-car",
                 "parameters": [
                     {
-                        "description": "Car info to update (only regnum, mark, model, year and owner_id are required).",
+                        "description": "Change car info, ID and other one or more fields are required. If the field is empty, it will not be changed .",
                         "name": "input",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/Effective-Mobile_internal_structures.Car"
+                            "$ref": "#/definitions/Effective-Mobile_internal_db.Car"
                         }
                     }
                 ],
@@ -97,31 +97,31 @@ const docTemplate = `{
                     "200": {
                         "description": "ok",
                         "schema": {
-                            "$ref": "#/definitions/Effective-Mobile_internal_structures.StatusOKMessage"
+                            "$ref": "#/definitions/Effective-Mobile_internal_db.StatusOKMessage"
                         }
                     },
                     "400": {
                         "description": "bad request",
                         "schema": {
-                            "$ref": "#/definitions/Effective-Mobile_internal_structures.StatusBadRequestMessage"
+                            "$ref": "#/definitions/Effective-Mobile_internal_db.StatusBadRequestMessage"
                         }
                     },
                     "404": {
                         "description": "not found",
                         "schema": {
-                            "$ref": "#/definitions/Effective-Mobile_internal_structures.StatusNotFoundMessage"
+                            "$ref": "#/definitions/Effective-Mobile_internal_db.StatusNotFoundMessage"
                         }
                     },
                     "500": {
                         "description": "internal server error",
                         "schema": {
-                            "$ref": "#/definitions/Effective-Mobile_internal_structures.StatusInternalServerErrorMessage"
+                            "$ref": "#/definitions/Effective-Mobile_internal_db.StatusInternalServerErrorMessage"
                         }
                     }
                 }
             },
             "delete": {
-                "description": "Delete car from database by id.",
+                "description": "Delete a car from the database by ID.",
                 "consumes": [
                     "application/json"
                 ],
@@ -133,29 +133,38 @@ const docTemplate = `{
                 ],
                 "summary": "Delete car",
                 "operationId": "delete-car",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Car ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "ok",
                         "schema": {
-                            "$ref": "#/definitions/Effective-Mobile_internal_structures.StatusOKMessage"
+                            "$ref": "#/definitions/Effective-Mobile_internal_db.StatusOKMessage"
                         }
                     },
                     "400": {
                         "description": "bad request",
                         "schema": {
-                            "$ref": "#/definitions/Effective-Mobile_internal_structures.StatusBadRequestMessage"
+                            "$ref": "#/definitions/Effective-Mobile_internal_db.StatusBadRequestMessage"
                         }
                     },
                     "404": {
                         "description": "not found",
                         "schema": {
-                            "$ref": "#/definitions/Effective-Mobile_internal_structures.StatusNotFoundMessage"
+                            "$ref": "#/definitions/Effective-Mobile_internal_db.StatusNotFoundMessage"
                         }
                     },
                     "500": {
                         "description": "internal server error",
                         "schema": {
-                            "$ref": "#/definitions/Effective-Mobile_internal_structures.StatusInternalServerErrorMessage"
+                            "$ref": "#/definitions/Effective-Mobile_internal_db.StatusInternalServerErrorMessage"
                         }
                     }
                 }
@@ -163,7 +172,7 @@ const docTemplate = `{
         },
         "/info": {
             "get": {
-                "description": "Get all cars from database or filtered by regnum, mark and model (optional).",
+                "description": "Get all cars from database or filtered by regnum, mark and model (optional). All filters should be written as query parameters.",
                 "consumes": [
                     "application/json"
                 ],
@@ -175,29 +184,49 @@ const docTemplate = `{
                 ],
                 "summary": "Get cars",
                 "operationId": "get-all-cars",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Registration number",
+                        "name": "regnum",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Car mark",
+                        "name": "mark",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Car model",
+                        "name": "model",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "ok",
                         "schema": {
-                            "$ref": "#/definitions/Effective-Mobile_internal_structures.StatusOKMessage"
+                            "$ref": "#/definitions/Effective-Mobile_internal_db.StatusOKMessage"
                         }
                     },
                     "400": {
                         "description": "bad request",
                         "schema": {
-                            "$ref": "#/definitions/Effective-Mobile_internal_structures.StatusBadRequestMessage"
+                            "$ref": "#/definitions/Effective-Mobile_internal_db.StatusBadRequestMessage"
                         }
                     },
                     "404": {
                         "description": "not found",
                         "schema": {
-                            "$ref": "#/definitions/Effective-Mobile_internal_structures.StatusNotFoundMessage"
+                            "$ref": "#/definitions/Effective-Mobile_internal_db.StatusNotFoundMessage"
                         }
                     },
                     "500": {
                         "description": "internal server error",
                         "schema": {
-                            "$ref": "#/definitions/Effective-Mobile_internal_structures.StatusInternalServerErrorMessage"
+                            "$ref": "#/definitions/Effective-Mobile_internal_db.StatusInternalServerErrorMessage"
                         }
                     }
                 }
@@ -205,7 +234,7 @@ const docTemplate = `{
         },
         "/owners": {
             "post": {
-                "description": "Add a new owner to the database from JSON input.",
+                "description": "Add a new owner to the database from JSON input body.",
                 "consumes": [
                     "application/json"
                 ],
@@ -224,7 +253,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/Effective-Mobile_internal_structures.Owner"
+                            "$ref": "#/definitions/Effective-Mobile_internal_db.Owner"
                         }
                     }
                 ],
@@ -232,25 +261,25 @@ const docTemplate = `{
                     "200": {
                         "description": "ok",
                         "schema": {
-                            "$ref": "#/definitions/Effective-Mobile_internal_structures.StatusOKMessage"
+                            "$ref": "#/definitions/Effective-Mobile_internal_db.StatusOKMessage"
                         }
                     },
                     "400": {
                         "description": "bad request",
                         "schema": {
-                            "$ref": "#/definitions/Effective-Mobile_internal_structures.StatusBadRequestMessage"
+                            "$ref": "#/definitions/Effective-Mobile_internal_db.StatusBadRequestMessage"
                         }
                     },
                     "404": {
                         "description": "not found",
                         "schema": {
-                            "$ref": "#/definitions/Effective-Mobile_internal_structures.StatusNotFoundMessage"
+                            "$ref": "#/definitions/Effective-Mobile_internal_db.StatusNotFoundMessage"
                         }
                     },
                     "500": {
                         "description": "internal server error",
                         "schema": {
-                            "$ref": "#/definitions/Effective-Mobile_internal_structures.StatusInternalServerErrorMessage"
+                            "$ref": "#/definitions/Effective-Mobile_internal_db.StatusInternalServerErrorMessage"
                         }
                     }
                 }
@@ -258,12 +287,12 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "Effective-Mobile_internal_structures.Car": {
+        "Effective-Mobile_internal_db.Car": {
             "type": "object",
             "properties": {
                 "id": {
                     "type": "integer",
-                    "example": 1
+                    "example": 3
                 },
                 "mark": {
                     "type": "string",
@@ -287,12 +316,12 @@ const docTemplate = `{
                 }
             }
         },
-        "Effective-Mobile_internal_structures.Owner": {
+        "Effective-Mobile_internal_db.Owner": {
             "type": "object",
             "properties": {
                 "id": {
                     "type": "integer",
-                    "example": 1
+                    "example": 4
                 },
                 "name": {
                     "type": "string",
@@ -308,7 +337,7 @@ const docTemplate = `{
                 }
             }
         },
-        "Effective-Mobile_internal_structures.StatusBadRequestMessage": {
+        "Effective-Mobile_internal_db.StatusBadRequestMessage": {
             "type": "object",
             "properties": {
                 "message": {
@@ -317,7 +346,7 @@ const docTemplate = `{
                 }
             }
         },
-        "Effective-Mobile_internal_structures.StatusInternalServerErrorMessage": {
+        "Effective-Mobile_internal_db.StatusInternalServerErrorMessage": {
             "type": "object",
             "properties": {
                 "message": {
@@ -326,7 +355,7 @@ const docTemplate = `{
                 }
             }
         },
-        "Effective-Mobile_internal_structures.StatusNotFoundMessage": {
+        "Effective-Mobile_internal_db.StatusNotFoundMessage": {
             "type": "object",
             "properties": {
                 "message": {
@@ -335,7 +364,7 @@ const docTemplate = `{
                 }
             }
         },
-        "Effective-Mobile_internal_structures.StatusOKMessage": {
+        "Effective-Mobile_internal_db.StatusOKMessage": {
             "type": "object",
             "properties": {
                 "status": {
