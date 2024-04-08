@@ -11,7 +11,7 @@ RUN go mod download
 
 COPY . .
 
-RUN swag init -g cmd/main.go --parseDependency --parseInternal -d ./,internal/structures,pkg/handlers
+RUN swag init -g cmd/main.go --parseDependency --parseInternal -d ./,internal/db,pkg/handlers
 RUN go build -o /main cmd/main.go 
 
 RUN chmod +x entrypoint.sh
