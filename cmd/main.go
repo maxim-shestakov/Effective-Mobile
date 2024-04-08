@@ -22,7 +22,7 @@ import (
 // @BasePath /
 
 //go install github.com/swaggo/swag/cmd/swag@v1.8.12
-//swag init -g cmd/main.go --parseDependency --parseInternal -d ./,internal/structures,pkg/handlers && go run cmd/main.go - to start
+//swag init -g cmd/main.go --parseDependency --parseInternal -d ./,internal/db,pkg/handlers - to generate docs
 
 func main() {
 	user := os.Getenv("POSTGRES_USER")

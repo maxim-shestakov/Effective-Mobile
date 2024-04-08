@@ -1,9 +1,9 @@
 basePath: /
 definitions:
-  Effective-Mobile_internal_structures.Car:
+  Effective-Mobile_internal_db.Car:
     properties:
       id:
-        example: 1
+        example: 3
         type: integer
       mark:
         example: BMW
@@ -21,10 +21,10 @@ definitions:
         example: 2015
         type: integer
     type: object
-  Effective-Mobile_internal_structures.Owner:
+  Effective-Mobile_internal_db.Owner:
     properties:
       id:
-        example: 1
+        example: 4
         type: integer
       name:
         example: Max
@@ -36,25 +36,25 @@ definitions:
         example: Shestakov
         type: string
     type: object
-  Effective-Mobile_internal_structures.StatusBadRequestMessage:
+  Effective-Mobile_internal_db.StatusBadRequestMessage:
     properties:
       message:
         example: 'Error: bad request'
         type: string
     type: object
-  Effective-Mobile_internal_structures.StatusInternalServerErrorMessage:
+  Effective-Mobile_internal_db.StatusInternalServerErrorMessage:
     properties:
       message:
         example: 'Error: internal server error'
         type: string
     type: object
-  Effective-Mobile_internal_structures.StatusNotFoundMessage:
+  Effective-Mobile_internal_db.StatusNotFoundMessage:
     properties:
       message:
         example: 'Error: not found'
         type: string
     type: object
-  Effective-Mobile_internal_structures.StatusOKMessage:
+  Effective-Mobile_internal_db.StatusOKMessage:
     properties:
       status:
         example: ok
@@ -74,31 +74,31 @@ paths:
       description: Add a new car to the database from JSON input.
       operationId: create-car
       parameters:
-      - description: Car info (only regnum, mark, model, year and owner_id are required).
+      - description: Car info (regnum, mark, model, owner_id are required).
         in: body
         name: input
         required: true
         schema:
-          $ref: '#/definitions/Effective-Mobile_internal_structures.Car'
+          $ref: '#/definitions/Effective-Mobile_internal_db.Car'
       produces:
       - application/json
       responses:
         "200":
           description: ok
           schema:
-            $ref: '#/definitions/Effective-Mobile_internal_structures.StatusOKMessage'
+            $ref: '#/definitions/Effective-Mobile_internal_db.StatusOKMessage'
         "400":
           description: bad request
           schema:
-            $ref: '#/definitions/Effective-Mobile_internal_structures.StatusBadRequestMessage'
+            $ref: '#/definitions/Effective-Mobile_internal_db.StatusBadRequestMessage'
         "404":
           description: not found
           schema:
-            $ref: '#/definitions/Effective-Mobile_internal_structures.StatusNotFoundMessage'
+            $ref: '#/definitions/Effective-Mobile_internal_db.StatusNotFoundMessage'
         "500":
           description: internal server error
           schema:
-            $ref: '#/definitions/Effective-Mobile_internal_structures.StatusInternalServerErrorMessage'
+            $ref: '#/definitions/Effective-Mobile_internal_db.StatusInternalServerErrorMessage'
       summary: Create car
       tags:
       - API Functions
@@ -106,27 +106,33 @@ paths:
     delete:
       consumes:
       - application/json
-      description: Delete car from database by id.
+      description: Delete a car from the database by ID.
       operationId: delete-car
+      parameters:
+      - description: Car ID
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: ok
           schema:
-            $ref: '#/definitions/Effective-Mobile_internal_structures.StatusOKMessage'
+            $ref: '#/definitions/Effective-Mobile_internal_db.StatusOKMessage'
         "400":
           description: bad request
           schema:
-            $ref: '#/definitions/Effective-Mobile_internal_structures.StatusBadRequestMessage'
+            $ref: '#/definitions/Effective-Mobile_internal_db.StatusBadRequestMessage'
         "404":
           description: not found
           schema:
-            $ref: '#/definitions/Effective-Mobile_internal_structures.StatusNotFoundMessage'
+            $ref: '#/definitions/Effective-Mobile_internal_db.StatusNotFoundMessage'
         "500":
           description: internal server error
           schema:
-            $ref: '#/definitions/Effective-Mobile_internal_structures.StatusInternalServerErrorMessage'
+            $ref: '#/definitions/Effective-Mobile_internal_db.StatusInternalServerErrorMessage'
       summary: Delete car
       tags:
       - API Functions
@@ -136,32 +142,32 @@ paths:
       description: Update car info in the database by id.
       operationId: update-car
       parameters:
-      - description: Car info to update (only regnum, mark, model, year and owner_id
-          are required).
+      - description: Change car info, ID and other one or more fields are required.
+          If the field is empty, it will not be changed .
         in: body
         name: input
         required: true
         schema:
-          $ref: '#/definitions/Effective-Mobile_internal_structures.Car'
+          $ref: '#/definitions/Effective-Mobile_internal_db.Car'
       produces:
       - application/json
       responses:
         "200":
           description: ok
           schema:
-            $ref: '#/definitions/Effective-Mobile_internal_structures.StatusOKMessage'
+            $ref: '#/definitions/Effective-Mobile_internal_db.StatusOKMessage'
         "400":
           description: bad request
           schema:
-            $ref: '#/definitions/Effective-Mobile_internal_structures.StatusBadRequestMessage'
+            $ref: '#/definitions/Effective-Mobile_internal_db.StatusBadRequestMessage'
         "404":
           description: not found
           schema:
-            $ref: '#/definitions/Effective-Mobile_internal_structures.StatusNotFoundMessage'
+            $ref: '#/definitions/Effective-Mobile_internal_db.StatusNotFoundMessage'
         "500":
           description: internal server error
           schema:
-            $ref: '#/definitions/Effective-Mobile_internal_structures.StatusInternalServerErrorMessage'
+            $ref: '#/definitions/Effective-Mobile_internal_db.StatusInternalServerErrorMessage'
       summary: Update car
       tags:
       - API Functions
@@ -170,27 +176,40 @@ paths:
       consumes:
       - application/json
       description: Get all cars from database or filtered by regnum, mark and model
-        (optional).
+        (optional). All filters should be written as query parameters.
       operationId: get-all-cars
+      parameters:
+      - description: Registration number
+        in: query
+        name: regnum
+        type: string
+      - description: Car mark
+        in: query
+        name: mark
+        type: string
+      - description: Car model
+        in: query
+        name: model
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: ok
           schema:
-            $ref: '#/definitions/Effective-Mobile_internal_structures.StatusOKMessage'
+            $ref: '#/definitions/Effective-Mobile_internal_db.StatusOKMessage'
         "400":
           description: bad request
           schema:
-            $ref: '#/definitions/Effective-Mobile_internal_structures.StatusBadRequestMessage'
+            $ref: '#/definitions/Effective-Mobile_internal_db.StatusBadRequestMessage'
         "404":
           description: not found
           schema:
-            $ref: '#/definitions/Effective-Mobile_internal_structures.StatusNotFoundMessage'
+            $ref: '#/definitions/Effective-Mobile_internal_db.StatusNotFoundMessage'
         "500":
           description: internal server error
           schema:
-            $ref: '#/definitions/Effective-Mobile_internal_structures.StatusInternalServerErrorMessage'
+            $ref: '#/definitions/Effective-Mobile_internal_db.StatusInternalServerErrorMessage'
       summary: Get cars
       tags:
       - API Functions
@@ -198,7 +217,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Add a new owner to the database from JSON input.
+      description: Add a new owner to the database from JSON input body.
       operationId: add-owner
       parameters:
       - description: Owner info (only name, surname are required).
@@ -206,26 +225,26 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/Effective-Mobile_internal_structures.Owner'
+          $ref: '#/definitions/Effective-Mobile_internal_db.Owner'
       produces:
       - application/json
       responses:
         "200":
           description: ok
           schema:
-            $ref: '#/definitions/Effective-Mobile_internal_structures.StatusOKMessage'
+            $ref: '#/definitions/Effective-Mobile_internal_db.StatusOKMessage'
         "400":
           description: bad request
           schema:
-            $ref: '#/definitions/Effective-Mobile_internal_structures.StatusBadRequestMessage'
+            $ref: '#/definitions/Effective-Mobile_internal_db.StatusBadRequestMessage'
         "404":
           description: not found
           schema:
-            $ref: '#/definitions/Effective-Mobile_internal_structures.StatusNotFoundMessage'
+            $ref: '#/definitions/Effective-Mobile_internal_db.StatusNotFoundMessage'
         "500":
           description: internal server error
           schema:
-            $ref: '#/definitions/Effective-Mobile_internal_structures.StatusInternalServerErrorMessage'
+            $ref: '#/definitions/Effective-Mobile_internal_db.StatusInternalServerErrorMessage'
       summary: Add owner
       tags:
       - API Functions
