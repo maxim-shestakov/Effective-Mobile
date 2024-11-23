@@ -2,6 +2,7 @@ package main
 
 import (
 	"Effective-Mobile/internal/db"
+	"github.com/pressly/goose/v3"
 	"log"
 	"net/http"
 	"os"
@@ -35,6 +36,10 @@ func main() {
 		log.Fatal("DB environment variables are not set")
 	}
 	db := db.New(user, pass, host, port, dataBase)
+	err := goose.Up(db.GetDB(), "/app/db/migrations")
+	if err != nil {
+		log.Fatal(err)
+	}
 	log.Println("Connected to DB")
 	defer db.Close()
 	r := gin.Default()

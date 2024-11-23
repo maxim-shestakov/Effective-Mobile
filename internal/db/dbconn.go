@@ -8,21 +8,26 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type Postgresql struct {
+type Repository struct {
 	db *sql.DB
 }
 
-func New(user, pass, host, port, dataBase string) *Postgresql {
+func New(user, pass, host, port, dataBase string) *Repository {
 	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", user, pass, host, port, dataBase)
 
+	log.Println(connStr)
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return &Postgresql{db: db}
+	return &Repository{db: db}
 }
 
-func (p *Postgresql) Close() error {
+func (r *Repository) GetDB() *sql.DB {
+	return r.db
+}
+
+func (p *Repository) Close() error {
 	return p.db.Close()
 }
