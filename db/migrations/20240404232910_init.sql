@@ -13,7 +13,8 @@ CREATE TABLE cars (
     mark VARCHAR(20) NOT NULL DEFAULT '',
     model VARCHAR(100) NOT NULL DEFAULT '',
     year INTEGER NOT NULL DEFAULT 0,
-    owner_id INTEGER NOT NULL REFERENCES owners(id)
+    owner_id INTEGER NOT NULL REFERENCES owners(id),
+    UNIQUE(regnum)
 );
 
 INSERT INTO owners (name, surname, patronymic) VALUES ('Иван', 'Иванов', 'Иванович');

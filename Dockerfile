@@ -1,4 +1,4 @@
-FROM golang:1.22
+FROM golang:1.23
 
 RUN go install github.com/swaggo/swag/cmd/swag@v1.8.12
 RUN go install github.com/pressly/goose/v3/cmd/goose@latest

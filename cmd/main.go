@@ -29,12 +29,13 @@ func main() {
 	pass := os.Getenv("POSTGRES_PASSWORD")
 	host := os.Getenv("POSTGRES_HOST")
 	port := os.Getenv("POSTGRES_PORT")
+	schema := os.Getenv("POSTGRES_SCHEMA")
 	dataBase := os.Getenv("POSTGRES_DB")
 
-	if len(user) == 0 || len(pass) == 0 || len(host) == 0 || len(port) == 0 || len(dataBase) == 0 {
+	if len(user) == 0 || len(pass) == 0 || len(host) == 0 || len(port) == 0 || len(dataBase) == 0 || len(schema) == 0 {
 		log.Fatal("DB environment variables are not set")
 	}
-	db := db.New(user, pass, host, port, dataBase)
+	db := db.New(user, pass, host, port, dataBase, schema)
 	log.Println("Connected to DB")
 	defer db.Close()
 	r := gin.Default()

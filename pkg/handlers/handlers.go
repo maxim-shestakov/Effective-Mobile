@@ -129,13 +129,22 @@ func CreateCar(st db.Storage) func(c *gin.Context) {
 // @Router /cars/{id} [put]
 func UpdateCar(st db.Storage) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		var car db.Car
-		if err := c.ShouldBindJSON(&car); err != nil {
+		var (
+			car db.Car
+			err error
+		)
+		if err = c.ShouldBindJSON(&car); err != nil {
 			log.Println(err)
 			c.JSON(http.StatusBadRequest, gin.H{"error": "can't bind json body to struct"})
 			return
 		}
-
+		id := c.Param("id")
+		car.ID, err = strconv.Atoi(id)
+		if err != nil {
+			log.Println(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "can't convert car id to int"})
+			return
+		}
 		if err := st.UpdateCar(car); err != nil {
 			log.Println(err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "can't update a car in the db"})
