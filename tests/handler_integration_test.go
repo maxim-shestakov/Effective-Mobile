@@ -113,6 +113,13 @@ func (s *TestSuite) TestDeleteCar() {
 
 	s.test.Nil(err)
 	s.test.Empty(cars)
+
+	// invalid id test
+	resp, err = s.httpCli.Delete(s.url + "/cars/first").
+		Do(ctx)
+
+	s.test.Nil(err)
+	s.test.Equal(http.StatusInternalServerError, resp.StatusCode())
 }
 
 func (s *TestSuite) TestAddOwner() {
